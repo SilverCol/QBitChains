@@ -1,0 +1,263 @@
+\documentclass[a4paper]{article}
+\usepackage[slovene]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+%\usepackage[margin=2cm, bottom=3cm, foot=1.5cm]{geometry}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{subcaption}
+\usepackage{hyperref}
+
+\newcommand{\tht}{\theta}
+\newcommand{\Tht}{\Theta}
+\newcommand{\dlt}{\delta}
+\newcommand{\eps}{\epsilon}
+\newcommand{\thalf}{\frac{3}{2}}
+\newcommand{\ddx}[1]{\frac{d^2#1}{dx^2}}
+\newcommand{\ddr}[2]{\frac{\partial^2#1}{\partial#2^2}}
+\newcommand{\mddr}[3]{\frac{\partial^2#1}{\partial#2\partial#3}}
+
+\newcommand{\der}[2]{\frac{d#1}{d#2}}
+\newcommand{\pder}[2]{\frac{\partial#1}{\partial#2}}
+\newcommand{\half}{\frac{1}{2}}
+\newcommand{\forth}{\frac{1}{4}}
+\newcommand{\q}{\underline{q}}
+\newcommand{\p}{\underline{p}}
+\newcommand{\x}{\underline{x}}
+\newcommand{\liu}{\hat{\mathcal{L}}}
+\newcommand{\bigO}[1]{\mathcal{O}\left( #1 \right)}
+
+\begin{document}
+
+    \title{\sc\large Višje računske metode\\
+		\bigskip
+		\bf\Large Trotter-Suzukijev razcep: Simplektični integratorji}
+	\author{Mitja Vodnik, 28182041}
+	\date{\today}
+	\maketitle
+
+    Rešujemo klasični problem 2D neharmonskega nihala oziroma, ekvivalentno, dveh sklopljenih 1D neharmonskih nihal. Hamiltonovo funkcijo v tem
+    primeru zapišemo kot:
+
+    \begin{equation}\label{hamilton}
+        H(\q, \p) = T(\p) + V(\q) = \half p_1^2 + \half p_2^2 + \half q_1^2 + \half q_2^2 + \lambda q_1^2 q_2^2,
+    \end{equation}
+
+    kjer posplošene koordinate in momente pišemo kot $\q = (q_1, q_2)$ in $\p = (p_1, p_2)$, kinetično in potencialno energijo pa kot:
+
+    \begin{equation}\label{energies}
+        T(\p) = \half p_1^2 + \half p_2^2 \quad in \quad V(\q) = \half q_1^2 + \half q_2^2 + \lambda q_1^2 q_2^2
+    \end{equation}
+
+    Kot rešitev problema nas zanimajo trajektorije $\x(t) = (\q(t), \p(t))$ v faznem prostoru, ki so določene s Hamitonovimi enačbami gibanja:
+
+    \begin{equation}\label{equationsOfMotion}
+        \der{\x}{t} = \{\x, H(\x)\} = \liu \x
+    \end{equation}
+
+    Tu Poissonov oklepaj pišemo kot:
+
+        \begin{equation}\label{poisson}
+        \{A, B\} = \sum_{j = 1}^{N} \left( \pder{A}{q_j}\pder{B}{p_j} - \pder{A}{p_j}\pder{B}{q_j} \right),
+    \end{equation}
+
+    z $\liu = \{\bullet, H\}$ pa smo označili Liuvilleov operator. Časovni razvoj zapišemo tudi s pomočjo Liuvilleovega propagatorja:
+
+    \begin{equation}\label{propagator}
+        \x(t) = U(t)\x(0), \quad U(t) = e^{t\liu}
+    \end{equation}
+
+    Osnovna ideja simplektične integracije je razcep tega propagatoja:
+
+    \begin{equation}\label{simplectic}
+        U(t) = exp\left( \tau\{\bullet, T\} + \tau\{\bullet, V\} \right)^N, \quad \tau = \frac{t}{N},
+    \end{equation}
+
+    kjer poznamo trajektorije, ki jih generirata kinetični in potencialni propagator:
+
+    \begin{equation}\label{baseTrajectories}
+        \begin{split}
+            (\q^\prime, \p^\prime) &= exp\left( \tau\{\bullet, T\}\right) (\q, \p) = \left( \q + \tau\pder{T(\p)}{\p}, \p \right) \\
+            (\q^\prime, \p^\prime) &= exp\left( \tau\{\bullet, V\}\right) (\q, \p) = \left( \q, \p -\tau\pder{V(\q)}{\q} \right)
+        \end{split}
+    \end{equation}
+
+	\section{Trotter-Suzukijeve formule}
+
+    Za računanje izraza \ref{simplectic} uporabimo aproksimacijo znano kot Trotter-Suzukijeve formule. Slednje se uporablja v računanju 
+    eksponentne funkcije $e^{zH}$ operatorja in temeljijo ravno  na razcepu kakršen je zgoraj omenjeni. Ideja je, da začetni operator $H$ zapišemo
+    kot vsoto dveh ($H = A + B$), katerih eksponentni funkciji $e^{zA}$ in $e^{zB}$ znamo učinkovito računati (Sicer ga lahko ga razdelimo na poljubno
+    število delov, a za naš primer sta dovolj dva.). Trotterjeva formula nam tedaj da oceno:
+
+    \begin{equation}\label{trotter}
+        e^{z(A + B)} = \left( e^{\frac{z}{N}A}e^{\frac{z}{N}B} \right)^N \left( 1 + \bigO{\frac{z^2}{N}} \right)
+    \end{equation}
+
+    Kot vidimo, je ta formula poljubno natančna za dovolj velik $N$ (Dodatni pogoji so sicer potrebni za neomejene operatorje, a mi imamo opravka
+    le z operatorji končnega ranga.). Natančnost pa se da še povečati in sicer z dodatnim razcepom operatorja in simetrizacijo formule. Tako dobljenim
+    formulam pa pravimo Suzukijeve formule in jih v splošnem zapišemo kot:
+
+    \begin{equation}\label{suzuki}
+        e^{z(A + B)} = e^{c_1zA} e^{d_1zB} ... e^{c_kzA} e^{d_kzB} + \bigO{z^{p+1}}
+    \end{equation}
+
+    Formule predstavljajo razcep na $2k$ faktorjev, katerega natančnost bo padala kot $\frac{1}{N^p}$. S $k$ torej označimo dolžino, s $p$
+    pa red razcepa. Seveda, si pri konstrukciji takih formul prizadevamo doseči čim večji red s kar se da majhno dolžino. Navedimo dve Suzukijevi
+    formuli z realnimi koeficienti:
+
+    \begin{equation}\label{suzuki2}
+        S_2(z) = e^{\frac{z}{2}A} e^{zB} e^{\frac{z}{2}A}, \quad e^{z(A + B)} = S_2(z) + \bigO{z^{3}}
+    \end{equation}
+
+    \begin{equation}\label{suzuki4}
+        \begin{split}
+            S_4(z) = S_2(x_1z)S_2(x_0z)S_2(x_1z),& \quad x_0 = -\frac{2^{1/3}}{2 - 2^{1/3}}, \quad x_1 = \frac{1}{2 - 2^{1/3}}, \\
+            \quad e^{z(A + B)} &= S_4(z) + \bigO{z^{5}}
+        \end{split}
+    \end{equation}
+
+    Vidimo, da sta to shemi redov $p = 2$ in $p = 4$, uspe nam torej izboljšati natančnost osnovne Trotterjeve formule \ref{trotter}. Povedati je
+    treba še, da formula \ref{suzuki4} uporablja negativne koeficiente, kar je lahko problematično v primeru neomejenih operatorjev. Za formulo
+    enakega reda a brez tega problema je potrebno uporabiti kompleksne koeficiente, vendar to za naš problem ne bo potrebno.
+
+    \section{Učinkovitost formul}
+
+    Implementiral sem štiri različne sheme za računanje časovnega razvoja nihala. Tri izmed njih pri računanju uporabijo formule iz prejšnjega
+    razdelka (konkretno \ref{trotter}, \ref{suzuki2} in \ref{suzuki4}), ena pa, za primerjavo, metodo Runge-Kutta 4. reda (sistem enačb za to metodo
+    se dobi z zapisom 2. Newtonovega zakona). \\
+    Pri oceni učinkovitiosti metode upoštevamo dva parametra: računsko zahtevnost, ki naj bo čim manjša, in natančnost, ki naj bo čim večja.
+    Graf na sliki \ref{comparison} nam pove nekaj o natančnosti metod - prikazuje kako dobro se ohranja energija v odvisnosti od izbrane velikosti
+    časovnega koraka $\tau$. V tem pogledu se za najboljši izkažeta Suzukijevi formuli, kjer formula 4. reda še posebej dominira. Runge-Kutta metoda
+    je še nekako primerljiva, Trotterjeva pa je za uporabo že preslaba. \\
+    Kar nam ta graf namiguje, je potrjeno tudi iz stališča računske zahtevnosti: Runge-Kutta, ki sploh ni najbolj natančna, je računsko najzahtevnejša
+    - porabi približno 1.5-krat več časa kot Suzukijeva formula 4. reda ($S_4$) za račun pri enakih parametrih. $S_4$ je pri enakih pogojih za podoben
+    faktor zahtevnejša od $S_2$, vendar doseže boljšo natančnost pri več kot 10-krat večjih $\tau$, torej imamo vse razloge, da za nadaljne izračune
+    uporabljamo metodo $S_4$.
+
+    \begin{figure}
+        \centering
+        \includegraphics[width = \textwidth]{comparison/comparison}
+        \caption{Maksimalno relativno odstopanje od konstantne energije na eni trajektoriji ob uporabi različnih shem: 
+        Trotterjeva formula (T1) \ref{trotter},
+        Suzukijeva 2. reda (S2) \ref{suzuki2},
+        Suzukijeva 4. reda (S4) \ref{suzuki4} in 
+        Runge-Kutta 4. reda (RK4).
+        (Vse trajektorije so računane do časa okoli $t = 10000$ pri parametru $\lambda = 0$.)}
+        \label{comparison}
+    \end{figure}
+
+    \section{Trajektorije}
+
+    Kot vidimo v prejšnjem razdelku, lahko s simplektično inegracijo precej natančno računamo zelo dolge trajektorije nihala - poglejmo si nekaj
+    takih trajektorij pri različnih vrednostih anharmonskega parametra $\lambda$.\\
+    Na sliki \ref{order} imamo tri primere pri relativno majhnem $\lambda$. V prvem primeru je $\lambda = 0$ - prostostni stopji nihata
+    razklopjeno in trajektorija je elipsa. V drugih dveh primerih, ko je $\lambda$ neničelna in sta prostostni stopnji sklopljeni, so trajektorije
+    že bolj zanimive.\\
+    Slika \ref{chaos} pa že prikazuje prehod v kaotičen režim - trajektorija nima več urejenega poteka. Opazimo lahko, da območje, kjer se
+    nihalo giblje postaja vedno bolj zvezdasto.
+    
+    \begin{figure}
+        \centering
+        \includegraphics[width = \textwidth]{trajectories/order}
+        \caption{Trajektorije razvite preko časa $t = 300$ pri vrednostih parametra:
+        a) $\lambda = 0$,
+        b) $\lambda = 0.5$ in
+        c) $\lambda = 1$.
+        (Vse trajektorije so računane z začetnimi pogoji $\x = (0, \half, 1, 0)$)}
+        \label{order}
+    \end{figure}
+    
+    \begin{figure}
+        \centering
+        \includegraphics[width = \textwidth]{trajectories/chaos}
+        \caption{Trajektorije razvite preko časa $t = 300$ pri vrednostih parametra:
+        a) $\lambda = 1.5$,
+        b) $\lambda = 5$,
+        c) $\lambda = 50$ in
+        c) $\lambda = 1000$.
+        (Vse trajektorije so računane z začetnimi pogoji $\x_0 = (0, \half, 1, 0)$)}
+        \label{chaos}
+    \end{figure}
+
+    \section{Poincarejevi preseki}
+
+    Za bolj jasno sliko o tem, katera trajektorija je kaotična in katera ne si je koristno pogledati Poincarejev presek - 2D podprostor
+    v sicer (v našem primeru) 4D faznem prostoru. Jaz sem si za presek izbral $(q_1, p_1)$ ravnino. Nekaotična trajektorija v takšnem preseku
+    izgleda kot množica sklenjenih krivulj, kaotična pa kot nek lik iz nepovezanih točk. \\
+    Za primer si na slikah od \ref{sections1} do \ref{sections4} poglejmo, kako se preseki nekaj različnih trajektorij spreminjajo s povečevanjem
+    anharmonskega parametra. Na prvi sliki \ref{sections1}a), pri $\lambda = 1$, so vse trajektorije še nekaotične - preseki večinoma
+    sestojijo iz nekaj disjunktnih sklenjenih krivulj. Že na naslednji sliki je postala ena od trajektorij kaotična. Na sledečih slikah
+    lahko opazujemo kako, sčasoma z dovolj velikim $\lambda$ tudi ostale trajektorije postanejo kaotične - na koncu nekaotična ostane
+    le še ena, ki se sicer obdrži do nekje med $\lambda = 3.25$ in $\lambda = 3.5$.
+    
+    \begin{figure}
+        \centering
+        \includegraphics[height = .9\textheight]{sections/sections1}
+        \caption{Poincarejevi preseki razvita preko časa $t = 300000$ pri vrednostih parametra:
+        a) $\lambda = 1$ in
+        b) $\lambda = 1.5$.
+        Prikazani so preseki za 8 trajektorij z različnimi začetnimi pogoji, a z enako energijo $E = 0.625$.
+        Modra trajektorija iz slike a) na sliko b) postane kaotična.}
+        \label{sections1}
+    \end{figure}
+ 
+    \begin{figure}
+        \centering
+        \includegraphics[height = .9\textheight]{sections/sections2}
+        \caption{Nadaljevanje prejšnje slike \ref{sections1}. Vrednosti parametra sta:
+        c) $\lambda = 1.5$ in
+        d) $\lambda = 1.75$.
+        Štiri trajektorije, ki postanejo kaotične, so izvzete.}
+        \label{sections2}
+    \end{figure}
+ 
+    \begin{figure}
+        \centering
+        \includegraphics[height = .9\textheight]{sections/sections3}
+        \caption{Nadaljevanje prejšnje slike \ref{sections2}. Vrednosti parametra sta:
+        c) $\lambda = 2.0$ in
+        d) $\lambda = 2.5$.
+        Trajektoriji, ki sta na sliki e) že kaotični sta izvzeti na sliki f).}
+        \label{sections3}
+    \end{figure}
+ 
+    \begin{figure}
+        \centering
+        \includegraphics[height = .9\textheight]{sections/sections4}
+        \caption{Nadaljevanje prejšnje slike \ref{sections3}. Vrednosti parametra sta:
+        c) $\lambda = 3.0$ in
+        d) $\lambda = 3.25$.
+        Tu je oranžna trajektorija tik pred tem, da postane kaotična.}
+        \label{sections4}
+    \end{figure}
+
+    \section{Ekviparticijski izrek}
+
+    Ekviparticijski izrek pravi, da sta v termaliziranem stanju časovni povprečji komponent kinetične energije $\langle p_1^2 \rangle$ in
+    $\langle p_2^2 \rangle$ enaki. Preverimo ta izrek za naše nihalo. Časovno povprečje komponente kinetične energije zapišemo kot:
+
+    \begin{equation}
+        \langle p_j2^2 \rangle(t) = \frac{1}{t} \int_0^t p_j^2(t^\prime)dt^\prime, \quad j = 1, 2
+    \end{equation}
+
+    Časovnemu razvoju razlike tih dveh povprečij sledimo tekom trajektorije in, če izrek velja, mora iti proti nič. Nekaj takih časovnih razvojev
+    preko časa $t = 300000$ je za različne vrednosti $\lambda$ prikazanih na sliki \ref{ekvipartition}. Prvi dva grafa, ustrezata trajektorijama, ki
+    nista kaotični in vidimo, da zanju izrek ne velja. Ostali trije grafi pripadajo kaotičnim krivuljam, in razlika gre proti nič. Na grafu d) sicer
+    vidimo velik skok, a vendar se tudi po tem vrednost vrača nazaj. Pri zelo velikem $\lambda$, na sliki e), je to približevanje ničli videti precej
+    bolj stabilno.
+ 
+    \begin{figure}
+        \centering
+        \includegraphics[width = \textwidth]{ekvipartition/ekvipartition}
+        \caption{Časovna povprečja razlike kvadratov komponent gibalne količine. Vrednosti parametra so:
+        a) $\lambda = 0$,
+        b) $\lambda = 1.0$,
+        c) $\lambda = 1.25$,
+        d) $\lambda = 1.75$ in
+        e) $\lambda = 50.0$.
+        (V vseh primerih računamo z začetnimi pogoji $\x_0 = (0, \half, 1, 0)$)}
+        \label{ekvipartition}
+    \end{figure}
+
+\end{document}
