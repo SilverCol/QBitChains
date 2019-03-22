@@ -3,4 +3,5 @@ project(vaja_II_2)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(vaja_II_2 src/main.cpp)
+add_executable(run src/main.cpp)
+target_link_libraries(run gflags pthread)
