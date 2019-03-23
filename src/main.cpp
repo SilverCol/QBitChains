@@ -8,6 +8,8 @@ DEFINE_int32(M, 100, "Number of propagation steps.");
 DEFINE_int32(steps, 1, "Number invisible steps inbetween.");
 DEFINE_double(z, .03, "Propagation step coefficient.");
 
+DEFINE_string(file, "../data/a.txt", "Path for the output file.");
+
 int main(int argc, char* argv[])
 {
 
@@ -23,5 +25,13 @@ int main(int argc, char* argv[])
     addRandomStates(randomStates, FLAGS_Np, dimH);
     std::cout << "Generated " << sizeof(std::complex<double>) * randomStates.size() * randomStates[0].size()
     << " bytes of data." << std::endl;
+
+    // TODO: make a switch, make parameters
+    std::vector<double> output;
+    Suzuki4 propagator(FLAGS_z);
+    std::cout << "Calculating free energy." << std::endl;
+    makeFreeEnergy(output, randomStates, FLAGS_N, FLAGS_M, FLAGS_steps, &propagator);
+    std::cout << "Writting to file: " << FLAGS_file << std::endl;
+    writeBinary(output, FLAGS_file);
     return 0;
 }

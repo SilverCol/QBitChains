@@ -9,6 +9,7 @@
 #include <random>
 #include <chrono>
 #include <fstream>
+#include <algorithm>
 #include "Suzuki4.h"
 
 namespace
@@ -98,10 +99,16 @@ void makeFreeEnergy
     double step = propagator->step();
     for (size_t i = 0; i < M; ++i)
     {
-        target.push_back((i+1) * step);
-        target.push_back(std::accumulate(results[i].begin(), results[i].end(), 0.0) / results[i].size());
-        std::vector<double> deviations;
-        // TODO: calculate standard deviation
+        double beta = (i+1) * step;
+        target.push_back(beta);
+        double mean = std::accumulate(results[i].begin(), results[i].end(), 0.0) / results[i].size();
+        target.push_back(-std::log(mean) / beta);
+        std::vector<double> deviations(results[i].size());
+        std::transform(results[i].begin(), results[i].end(), deviations.begin(),
+                [mean](double x){return x - mean;});
+        double stdDev = std::inner_product(deviations.begin(), deviations.end(), deviations.begin(), 0.0);
+        stdDev = std::sqrt(stdDev / (results.size() - 1));
+        target.push_back(-stdDev / (beta * mean));
     }
 }
 
