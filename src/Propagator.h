@@ -14,7 +14,7 @@ typedef std::vector<std::complex<double> > qState;
 class Propagator
 {
 public:
-    Propagator(const std::complex<double> z);
+    explicit Propagator(std::complex<double> z);
     void propagate(qState &state, size_t steps);
 private:
     virtual void step(qState& state) = 0;
