@@ -6,12 +6,9 @@
 #define VAJA_II_2_EXPERIMENTS_HPP
 
 #include <iostream>
-#include <complex>
-#include <vector>
 #include <random>
 #include <chrono>
-
-typedef std::vector<std::complex<double> > qState;
+#include "Propagator.h"
 
 void fillRandomState(qState& target, size_t size)
 {
