@@ -8,10 +8,10 @@ Propagator::Propagator(const std::complex<double> z):
 m_z(z)
 {}
 
-void Propagator::propagate(qState& state, size_t steps)
+void Propagator::propagate(qState& state, size_t N, size_t steps)
 {
     for (size_t i = 0; i < steps; ++i)
     {
-        step(state);
+        step(state, N);
     }
 }
