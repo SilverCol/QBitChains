@@ -4,6 +4,10 @@
 DEFINE_int32(N, 20, "Number of qbits.");
 DEFINE_int32(Np, 100, "Number of random states.");
 
+DEFINE_int32(M, 100, "Number of propagation steps.");
+DEFINE_int32(steps, 1, "Number invisible steps inbetween.");
+DEFINE_double(z, .03, "Propagation step coefficient.");
+
 int main(int argc, char* argv[])
 {
 

@@ -13,7 +13,7 @@ Propagator(z)
     std::complex<double> z0 = .5 * z1;
     std::complex<double> z2 = .5 * (z3 + z1);
 
-    // qbit gate matrix elements (3 of them are unique)
+    // qbit gate matrix elements (4 matrices, each with 3 unique elements)
     m_gate.push_back(std::exp(z0));
     m_gate.push_back(std::exp(-z0) * std::cosh(2.0 * z0));
     m_gate.push_back(std::exp(-z0) * std::sinh(2.0 * z0));

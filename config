@@ -3,3 +3,8 @@
 
 # Number of random states
 -Np=50
+
+# Propagation parameters
+-M=100
+-steps=1
+-z=.03

@@ -8,7 +8,7 @@
 #include <iostream>
 #include <random>
 #include <chrono>
-#include "Propagator.h"
+#include "Suzuki4.h"
 
 void fillRandomState(qState& target, size_t size)
 {
