@@ -1,8 +1,8 @@
 # Number of qbits
--N=10
+-N=20
 
 # Number of random states
--Np=50
+-Np=10
 
 # Propagation parameters
 -M=100

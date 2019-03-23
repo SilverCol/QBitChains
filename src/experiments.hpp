@@ -25,11 +25,10 @@ namespace
 
     double absSquare(const qState& state)
     {
-        double product;
-        for (size_t i = 0; i < state.size(); ++i)
+        double product = 0;
+        for (auto& coeff : state)
         {
-            double abs = std::abs(state[i]);
-            product += abs * abs;
+            product += std::norm(coeff);
         }
         return product;
     }
@@ -56,8 +55,8 @@ void fillRandomState(qState& target, size_t size)
     {
         double real = distribution(generator);
         double imag = distribution(generator);
-        norm += real * real + imag * imag;
         target.push_back(std::complex<double>(real, imag));
+        norm += std::norm(target.back());
     }
 
     norm = sqrt(norm);
@@ -96,7 +95,7 @@ void makeFreeEnergy
         ++n;
     }
 
-    double step = propagator.step();
+    double step = propagator->step();
     for (size_t i = 0; i < M; ++i)
     {
         target.push_back((i+1) * step);
