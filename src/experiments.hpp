@@ -8,7 +8,42 @@
 #include <iostream>
 #include <random>
 #include <chrono>
+#include <fstream>
 #include "Suzuki4.h"
+
+namespace
+{
+    std::complex<double> inner(const qState& state1, const qState& state2)
+    {
+        std::complex<double> product;
+        for (size_t i = 0; i < state1.size(); ++i)
+        {
+            product += std::conj(state1[i]) * state2[i];
+        }
+        return product;
+    }
+
+    double absSquare(const qState& state)
+    {
+        double product;
+        for (size_t i = 0; i < state.size(); ++i)
+        {
+            double abs = std::abs(state[i]);
+            product += abs * abs;
+        }
+        return product;
+    }
+}
+
+void writeBinary(std::vector<double>& data, const std::string& file)
+{
+    std::ofstream output(file, std::ios::binary);
+    for (double& x : data)
+    {
+        output.write(reinterpret_cast<char*>(&x), sizeof(x));
+    }
+    output.close();
+}
 
 void fillRandomState(qState& target, size_t size)
 {
@@ -43,5 +78,33 @@ void addRandomStates(std::vector<qState>& target, size_t states, size_t size)
         target.push_back(newState);
     }
 }
+
+void makeFreeEnergy
+(std::vector<double>& target, std::vector<qState>& states, size_t N, size_t M, size_t steps, Propagator* propagator)
+{
+    std::vector<std::vector<double> > results;
+    size_t n = 0;
+    for (qState& state : states)
+    {
+        std::cout << "Propagating random state #" << n << std::endl;
+        for (size_t i = 0; i < M; ++i)
+        {
+            if (n == 0) results.emplace_back();
+            propagator->propagate(state, N, steps);
+            results[i].push_back(absSquare(state));
+        }
+        ++n;
+    }
+
+    double step = propagator.step();
+    for (size_t i = 0; i < M; ++i)
+    {
+        target.push_back((i+1) * step);
+        target.push_back(std::accumulate(results[i].begin(), results[i].end(), 0.0) / results[i].size());
+        std::vector<double> deviations;
+        // TODO: calculate standard deviation
+    }
+}
+
 
 #endif //VAJA_II_2_EXPERIMENTS_HPP

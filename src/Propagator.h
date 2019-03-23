@@ -16,6 +16,7 @@ class Propagator
 public:
     explicit Propagator(std::complex<double> z);
     void propagate(qState& state, size_t N, size_t steps);
+    inline double step(){return std::abs(m_z);}
 private:
     virtual void step(qState& state, size_t N) = 0;
     std::complex<double> m_z;
