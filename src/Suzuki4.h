@@ -14,10 +14,8 @@ public:
     Suzuki4(std::complex<double> z);
 private:
     void step(qState& state) override;
-    std::vector<std::complex<double> > m_u0;
-    std::vector<std::complex<double> > m_u1;
-    std::vector<std::complex<double> > m_u2;
-    std::vector<std::complex<double> > m_u3;
+    void update(qState& state, qState::iterator gate, size_t start);
+    std::vector<std::complex<double> > m_gate;
 };
 
 
