@@ -46,6 +46,7 @@ void Suzuki4::step(qState& state, size_t N)
 
 void Suzuki4::update(qState& state, qState::iterator gate, size_t start, size_t N)
 {
+    qState temp(state.size(), 0);
     for (size_t j = start; j < N; j += 2)
     {
         size_t j1 = 0;
@@ -56,16 +57,17 @@ void Suzuki4::update(qState& state, qState::iterator gate, size_t start, size_t 
             if ((n >> j)&1 == (n >> j1)&1)
             {
                 // 0000 or 1111
-                state[n] *= *gate;
+                temp[n] = *gate * state[n];
             }
             else
             {
                 // 0110 or 1001 or 0101 or 1010
-                state[n] *= *(gate + 1);
+                temp[n] = *(gate + 1) * state[n];
                 size_t m = n ^ (1 << j);
                 m ^= 1 << j1;
-                state[n] += *(gate + 2) * state[m];
+                temp[n] += *(gate + 2) * state[m];
             }
         }
     }
+    state.swap(temp);
 }
