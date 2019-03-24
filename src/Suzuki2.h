@@ -9,7 +9,11 @@
 
 class Suzuki2: public Propagator
 {
-
+public:
+    Suzuki2(std::complex<double> z);
+private:
+    void step(qState& state, size_t N) override;
+    std::vector<std::complex<double> > m_gate;
 };
 
 
