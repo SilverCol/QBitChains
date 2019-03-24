@@ -1,5 +1,5 @@
 # Number of qbits
--N=6
+-N=12
 
 # Number of random states
 -Np=50

@@ -12,6 +12,7 @@ DEFINE_string(file, "../data/a.txt", "Path for the output file.");
 
 int main(int argc, char* argv[])
 {
+    auto start = std::chrono::high_resolution_clock::now();
 
     gflags::ParseCommandLineFlags(&argc, &argv, true);
 
@@ -20,10 +21,10 @@ int main(int argc, char* argv[])
     std::cout << "Number of qbits: " << FLAGS_N << std::endl;
     std::cout << "Hilbert dimension: " << dimH << std::endl;
 
-    std::vector<qState> randomStates;
+    std::list<qState> randomStates;
     std::cout << "Creating " << FLAGS_Np << " random states." << std::endl;
     addRandomStates(randomStates, FLAGS_Np, dimH);
-    std::cout << "Generated " << sizeof(std::complex<double>) * randomStates.size() * randomStates[0].size()
+    std::cout << "Generated " << sizeof(std::complex<double>) * randomStates.size() * randomStates.front().size()
     << " bytes of data." << std::endl;
 
     // TODO: make a switch, make parameters
@@ -33,5 +34,9 @@ int main(int argc, char* argv[])
     makeFreeEnergy(output, randomStates, FLAGS_N, FLAGS_M, FLAGS_steps, &propagator);
     std::cout << "Writting to file: " << FLAGS_file << std::endl;
     writeBinary(output, FLAGS_file);
+    auto finish = std::chrono::high_resolution_clock::now();
+    std::cout   << "Finished in "
+                << std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count()
+                << "ms" << std::endl;
     return 0;
 }

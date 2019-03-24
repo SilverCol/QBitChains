@@ -10,6 +10,7 @@
 #include <chrono>
 #include <fstream>
 #include <algorithm>
+#include <list>
 #include "Suzuki4.h"
 
 namespace
@@ -68,19 +69,19 @@ void fillRandomState(qState& target, size_t size)
     }
 }
 
-void addRandomStates(std::vector<qState>& target, size_t states, size_t size)
+void addRandomStates(std::list<qState>& target, size_t states, size_t size)
 {
     for (size_t n = 0; n < states; ++n)
     {
         std::cout << "Creating state #" << n << std::endl;
         qState newState;
         fillRandomState(newState, size);
-        target.push_back(newState);
+        target.push_front(newState);
     }
 }
 
 void makeFreeEnergy
-(std::vector<double>& target, std::vector<qState>& states, size_t N, size_t M, size_t steps, Propagator* propagator)
+(std::vector<double>& target, std::list<qState>& states, size_t N, size_t M, size_t steps, Propagator* propagator)
 {
     std::vector<std::vector<double> > results;
     size_t n = 0;
@@ -96,13 +97,15 @@ void makeFreeEnergy
         ++n;
     }
 
-    double step = propagator->step();
+    double step = 2 * propagator->step();
     for (size_t i = 0; i < M; ++i)
     {
         double beta = (i+1) * step;
         target.push_back(beta);
+
         double mean = std::accumulate(results[i].begin(), results[i].end(), 0.0) / results[i].size();
         target.push_back(-std::log(mean) / beta);
+
         std::vector<double> deviations(results[i].size());
         std::transform(results[i].begin(), results[i].end(), deviations.begin(),
                 [mean](double x){return x - mean;});
