@@ -99,20 +99,40 @@ void makeFreeEnergy
     }
 
     double step = 2 * propagator->step();
+    std::vector<double> betas;
+    std::vector<double> logZ;
+    std::vector<double> dLogZ;
     for (size_t i = 0; i < M; ++i)
     {
         double beta = (i+1) * step;
-        target.push_back(beta);
+        betas.push_back(beta);
 
         double mean = std::accumulate(results[i].begin(), results[i].end(), 0.0) / results[i].size();
-        target.push_back(-std::log(mean) / beta);
+        logZ.push_back(-std::log(mean));
 
         std::vector<double> deviations(results[i].size());
         std::transform(results[i].begin(), results[i].end(), deviations.begin(),
                 [mean](double x){return x - mean;});
         double stdDev = std::inner_product(deviations.begin(), deviations.end(), deviations.begin(), 0.0);
         stdDev = std::sqrt(stdDev / (results.size() - 1));
-        target.push_back(-stdDev / (beta * mean));
+        dLogZ.push_back(-stdDev / mean);
+    }
+
+    std::vector<double> F(betas.size());
+    std::adjacent_difference(logZ.begin(), logZ.end(), F.begin());
+    std::transform(F.begin(), F.end(), betas.begin(), F.begin(),
+            [step](double f, double beta){return - f / (beta * step);});
+
+    std::vector<double> dF(betas.size());
+    std::adjacent_difference(dLogZ.begin(), dLogZ.end(), dF.begin(), std::plus<>());
+    std::transform(dF.begin(), dF.end(), betas.begin(), dF.begin(),
+                   [step](double f, double beta){return - f / (beta * step);});
+
+    for (size_t i = 1; i < F.size(); ++i)
+    {
+        target.push_back(betas[i]);
+        target.push_back(F[i]);
+        target.push_back(dF[i]);
     }
 }
 
