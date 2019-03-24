@@ -27,14 +27,20 @@ int main(int argc, char* argv[])
     std::cout << "Generated " << sizeof(std::complex<double>) * randomStates.size() * randomStates.front().size()
     << " bytes of data." << std::endl;
 
+    std::complex<double> z = 0;
+    if (FLAGS_mode == 0) z = std::complex<double>(-FLAGS_z / 2, 0);
+
     Propagator* propagator;
     switch(FLAGS_scheme)
     {
+        case 1:
+            propagator = new Trotter(z);
+            break;
         case 2:
-            propagator = new Suzuki2(FLAGS_z);
+            propagator = new Suzuki2(z);
             break;
         case 4:
-            propagator = new Suzuki4(FLAGS_z);
+            propagator = new Suzuki4(z);
             break;
         default:
             std::cerr << "Invalid scheme." << std::endl;

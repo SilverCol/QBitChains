@@ -13,6 +13,7 @@
 #include <list>
 #include "Suzuki4.h"
 #include "Suzuki2.h"
+#include "Trotter.h"
 
 namespace
 {
