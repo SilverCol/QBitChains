@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <list>
 #include "Suzuki4.h"
+#include "Suzuki2.h"
 
 namespace
 {

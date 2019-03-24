@@ -5,6 +5,7 @@
 -Np=50
 
 # Propagation parameters
--M=200
+-M=50
 -steps=1
--z=.01
+-z=.04
+-scheme=4
