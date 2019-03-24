@@ -11,10 +11,13 @@ for n, entry in enumerate(data):
     stage = n % 3
     if stage == 0:
         beta.append(entry)
+        print('beta: ' + str(entry))
     elif stage == 1:
         E.append(entry)
+        print('E: ' + str(entry))
     elif stage == 2:
         error.append(entry)
+        print('dE: ' + str(entry))
 
 plt.rcParams.update({'font.size': 15})
 fig = plt.figure()
@@ -25,7 +28,7 @@ xMax = max(beta)
 ax = fig.subplots(subplot_kw=dict(aspect='auto', autoscale_on=False, xlim=(xMin, xMax), ylim=(yMin, yMax)))
 ax.grid()
 
-ax.plot(beta, E, '-', lw=2, color='black')
+ax.plot(beta, E, '-', lw=2)
 
 ax.set_ylabel(r'$F$')
 ax.set_xlabel(r'$\beta$')
