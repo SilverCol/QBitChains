@@ -35,39 +35,13 @@ void Suzuki4::step(qState& state, size_t N)
 {
     auto gate = m_gate.begin();
 
-    update(state, gate, 0, N);
-    update(state, gate + 3, 1, N);
-    update(state, gate + 6, 0, N);
-    update(state, gate + 9, 1, N);
-    update(state, gate + 6, 0, N);
-    update(state, gate + 3, 1, N);
-    update(state, gate, 0, N);
+    Propagator::update(state, gate, 0, N);
+    Propagator::update(state, gate + 3, 1, N);
+    Propagator::update(state, gate + 6, 0, N);
+    Propagator::update(state, gate + 9, 1, N);
+    Propagator::update(state, gate + 6, 0, N);
+    Propagator::update(state, gate + 3, 1, N);
+    Propagator::update(state, gate, 0, N);
 }
 
-void Suzuki4::update(qState& state, qState::iterator gate, size_t start, size_t N)
-{
-    qState temp(state.size(), 0);
-    for (size_t j = start; j < N; j += 2)
-    {
-        size_t j1 = 0;
-        if (j != N-1) j1 = j + 1;
 
-        for (size_t n = 0; n < state.size(); ++n)
-        {
-            if ((n >> j)&1 == (n >> j1)&1)
-            {
-                // 0000 or 1111
-                temp[n] = *gate * state[n];
-            }
-            else
-            {
-                // 0110 or 1001 or 0101 or 1010
-                temp[n] = *(gate + 1) * state[n];
-                size_t m = n ^ (1 << j);
-                m ^= 1 << j1;
-                temp[n] += *(gate + 2) * state[m];
-            }
-        }
-    }
-    state.swap(temp);
-}
