@@ -26,6 +26,8 @@ public:
     inline std::vector<std::complex<double> >::const_iterator begin() const {return m_coefficients.begin();}
     inline std::vector<std::complex<double> >::iterator end(){return m_coefficients.end();}
     inline std::vector<std::complex<double> >::const_iterator end() const {return m_coefficients.end();}
+
+    void localSpin(size_t j);
 private:
     std::vector<std::complex<double> > m_coefficients;
 };
