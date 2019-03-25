@@ -50,8 +50,10 @@ int main(int argc, char* argv[])
     std::vector<double> output;
     switch(FLAGS_mode)
     {
-        case 0: // Free energy mode
+        case 0: // Phase sum mode
             std::cout << "Calculating phase sums." << std::endl;
+            FLAGS_file.append(std::to_string(FLAGS_N));
+            FLAGS_file.append(".bin");
             makeFreeEnergy(output, randomStates, FLAGS_N, FLAGS_M, FLAGS_steps, propagator);
             break;
         default:

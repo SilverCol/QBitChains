@@ -1,34 +1,42 @@
 from matplotlib import pyplot as plt
 import numpy as np
 
-data = np.fromfile('phaseSum.bin')
-
 beta = []
 E = []
 
-for n, entry in enumerate(data):
-    stage = n % 3
-    if stage == 0:
-        beta.append(entry)
-    elif stage == 1:
-        E.append(entry)
+for i in range(11):
+    try:
+        data = np.fromfile('phaseSum' + str(2*i) + '.bin')
+    except:
+        continue
 
-beta = np.array(beta)
-E = np.array(E)
+    e = []
+    b = []
+
+    for n, entry in enumerate(data):
+        stage = n % 3
+        if stage == 0:
+            b.append(entry)
+        elif stage == 1:
+            e.append(entry)
+    beta.append(b)
+    E.append(e)
 
 E = - np.log(E)
-E = np.gradient(E, beta)
+for n in range(len(E)):
+    E[n] = np.gradient(E[n], beta[n])
 
 plt.rcParams.update({'font.size': 15})
 fig = plt.figure()
-yMax = max(E)
-yMin = min(E)
-xMin = min(beta)
-xMax = max(beta)
+yMax = np.amax(E)
+yMin = np.amin(E)
+xMin = np.amin(beta)
+xMax = np.amax(beta)
 ax = fig.subplots(subplot_kw=dict(aspect='auto', autoscale_on=False, xlim=(xMin, xMax), ylim=(yMin, yMax)))
 ax.grid()
 
-ax.plot(beta, E, '-o', lw=1, ms=2)
+for n, e in enumerate(E):
+    ax.plot(beta[n], e, '-o', lw=1, ms=2)
 
 ax.set_ylabel(r'$\langle H \rangle$')
 ax.set_xlabel(r'$\beta$')

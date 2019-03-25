@@ -1,24 +1,31 @@
 from matplotlib import pyplot as plt
 import numpy as np
 
-data = np.fromfile('phaseSum.bin')
-
 beta = []
 F = []
 error = []
 
-for n, entry in enumerate(data):
-    stage = n % 3
-    if stage == 0:
-        beta.append(entry)
-    elif stage == 1:
-        F.append(entry)
-    elif stage == 2:
-        error.append(entry)
+for i in range(11):
+    try:
+        data = np.fromfile('phaseSum' + str(2*i) + '.bin')
+    except:
+        continue
 
-beta = np.array(beta)
-F = np.array(F)
-error = np.array(error)
+    b = []
+    f = []
+    df = []
+
+    for n, entry in enumerate(data):
+        stage = n % 3
+        if stage == 0:
+            b.append(entry)
+        elif stage == 1:
+            f.append(entry)
+        elif stage == 2:
+            df.append(entry)
+    beta.append(b)
+    F.append(f)
+    error.append(df)
 
 error = np.divide(error, F)
 F = - np.log(F)
@@ -27,14 +34,15 @@ error = np.divide(error, beta)
 
 plt.rcParams.update({'font.size': 15})
 fig = plt.figure()
-yMax = max(F)
-yMin = min(F)
-xMin = min(beta)
-xMax = max(beta)
+yMax = np.amax(F)
+yMin = np.amin(F)
+xMin = np.amin(beta)
+xMax = np.amax(beta)
 ax = fig.subplots(subplot_kw=dict(aspect='auto', autoscale_on=False, xlim=(xMin, xMax), ylim=(yMin, yMax)))
 ax.grid()
 
-ax.errorbar(beta, F, error, fmt='-o', lw=1, ms=2)
+for n, f in enumerate(F):
+    ax.errorbar(beta[n], f, error[n], fmt='-o', lw=1, ms=2)
 
 ax.set_ylabel(r'$F$')
 ax.set_xlabel(r'$\beta$')

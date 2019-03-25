@@ -90,14 +90,21 @@ void makeFreeEnergy
     size_t n = 0;
     for (QState& state : states)
     {
+        auto start = std::chrono::high_resolution_clock::now();
         std::cout << "Propagating random state #" << n << std::endl;
         for (size_t i = 0; i < M; ++i)
         {
+            std::cout << "state #" << n << " step #" << i << std::endl;
             if (n == 0) results.emplace_back();
             propagator->propagate(state, N, steps);
             results[i].push_back(absSquare(state));
         }
         ++n;
+
+        auto finish = std::chrono::high_resolution_clock::now();
+        std::cout   << "Finished in "
+                    << std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count()
+                    << "ms" << std::endl;
     }
 
     double step = 2 * propagator->step() * steps;
@@ -126,6 +133,7 @@ void makeLocalSpinCorrelation
     size_t n = 0;
     for (QState& state : states)
     {
+        auto start = std::chrono::high_resolution_clock::now();
         std::cout << "Propagating random state #" << n << std::endl;
 
         QState xState(state);
@@ -133,6 +141,7 @@ void makeLocalSpinCorrelation
 
         for (size_t i = 0; i < M; ++i)
         {
+            std::cout << "state #" << n << "step #" << i << std::endl;
             if (n == 0) results.emplace_back();
             propagator->propagate(state, N, steps);
             propagator->propagate(xState, N, steps);
