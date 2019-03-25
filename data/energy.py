@@ -4,39 +4,33 @@ import numpy as np
 data = np.fromfile('phaseSum.bin')
 
 beta = []
-F = []
-error = []
+E = []
 
 for n, entry in enumerate(data):
     stage = n % 3
     if stage == 0:
         beta.append(entry)
     elif stage == 1:
-        F.append(entry)
-    elif stage == 2:
-        error.append(entry)
+        E.append(entry)
 
 beta = np.array(beta)
-F = np.array(F)
-error = np.array(error)
+E = np.array(E)
 
-error = np.divide(error, F)
-F = - np.log(F)
-F = np.divide(F, beta)
-error = np.divide(error, beta)
+E = - np.log(E)
+E = np.gradient(E, beta)
 
 plt.rcParams.update({'font.size': 15})
 fig = plt.figure()
-yMax = max(F)
-yMin = min(F)
+yMax = max(E)
+yMin = min(E)
 xMin = min(beta)
 xMax = max(beta)
 ax = fig.subplots(subplot_kw=dict(aspect='auto', autoscale_on=False, xlim=(xMin, xMax), ylim=(yMin, yMax)))
 ax.grid()
 
-ax.errorbar(beta, F, error, fmt='-o', lw=1, ms=2)
+ax.plot(beta, E, '-o', lw=1, ms=2)
 
-ax.set_ylabel(r'$F$')
+ax.set_ylabel(r'$\langle H \rangle$')
 ax.set_xlabel(r'$\beta$')
 
 plt.show()

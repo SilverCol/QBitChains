@@ -11,7 +11,7 @@ DEFINE_int32(scheme, 2, "Number of split-step scheme as S{scheme} (eg. 2 for S2)
 
 DEFINE_string(file, "../data/a.txt", "Path for the output file.");
 
-DEFINE_int32(mode, 0, "Operation mode: 0-freeEnergy");
+DEFINE_int32(mode, 0, "Operation mode: 0-phaseSum");
 
 int main(int argc, char* argv[])
 {
@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
     switch(FLAGS_mode)
     {
         case 0: // Free energy mode
-            std::cout << "Calculating free energy." << std::endl;
+            std::cout << "Calculating phase sums." << std::endl;
             makeFreeEnergy(output, randomStates, FLAGS_N, FLAGS_M, FLAGS_steps, propagator);
             break;
         default:
