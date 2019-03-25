@@ -19,6 +19,16 @@ for n, entry in enumerate(data):
         error.append(entry)
         print('dE: ' + str(entry))
 
+beta = np.array(beta)
+E = np.array(E)
+error = np.array(error)
+
+error = np.divide(error, E)
+E = - np.log(E)
+E = np.gradient(E, beta)
+#E = np.divide(E, beta)
+error = np.divide(error, beta)
+
 plt.rcParams.update({'font.size': 15})
 fig = plt.figure()
 yMax = max(E)
@@ -28,7 +38,7 @@ xMax = max(beta)
 ax = fig.subplots(subplot_kw=dict(aspect='auto', autoscale_on=False, xlim=(xMin, xMax), ylim=(yMin, yMax)))
 ax.grid()
 
-ax.plot(beta, E, '-', lw=2)
+ax.errorbar(beta, E, error, fmt='.', lw=1, ms=3)
 
 ax.set_ylabel(r'$F$')
 ax.set_xlabel(r'$\beta$')

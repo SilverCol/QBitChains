@@ -2,10 +2,10 @@
 -N=2
 
 # Number of random states
--Np=50
+-Np=1000
 
 # Propagation parameters
--M=68
+-M=100
 -steps=1
--z=.03
+-z=.02
 -scheme=4

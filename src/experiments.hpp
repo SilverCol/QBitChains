@@ -17,6 +17,10 @@
 
 namespace
 {
+    long seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::default_random_engine generator (seed);
+    std::normal_distribution<double> distribution (0.0,1.0);
+
     std::complex<double> inner(const qState& state1, const qState& state2)
     {
         std::complex<double> product;
@@ -50,10 +54,6 @@ void writeBinary(std::vector<double>& data, const std::string& file)
 
 void fillRandomState(qState& target, size_t size)
 {
-    long seed = std::chrono::system_clock::now().time_since_epoch().count();
-    std::default_random_engine generator (seed);
-    std::normal_distribution<double> distribution (0.0,1.0);
-
     double norm = 0;
     for (size_t n = 0; n < size; ++n)
     {
@@ -108,14 +108,14 @@ void makeFreeEnergy
 
         double mean = std::accumulate(results[i].begin(), results[i].end(), 0.0) / results[i].size();
         std::cout << "Mean: " << mean << std::endl;
-        target.push_back(-std::log(mean) / beta);
+        target.push_back(mean);
 
         std::vector<double> deviations(results[i].size());
         std::transform(results[i].begin(), results[i].end(), deviations.begin(),
                 [mean](double x){return x - mean;});
         double stdDev = std::inner_product(deviations.begin(), deviations.end(), deviations.begin(), 0.0);
-        stdDev = std::sqrt(stdDev / (results.size() - 1));
-        target.push_back(stdDev / (mean * beta));
+        stdDev = std::sqrt(stdDev / (results[i].size() - 1));
+        target.push_back(stdDev);
     }
 }
 
