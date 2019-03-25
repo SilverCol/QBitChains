@@ -31,7 +31,7 @@ Propagator(z)
     m_gate.push_back(std::exp(-z3) * std::sinh(2.0 * z3));
 }
 
-void Suzuki4::step(qState& state, size_t N)
+void Suzuki4::step(QState& state, size_t N)
 {
     auto gate = m_gate.begin();
 

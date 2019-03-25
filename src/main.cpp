@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
 
     size_t dimH = (size_t)1 << FLAGS_N;
 
-    std::list<qState> randomStates;
+    std::list<QState> randomStates;
     std::cout << "Creating " << FLAGS_Np << " random states." << std::endl;
     addRandomStates(randomStates, FLAGS_Np, dimH);
     std::cout << "Generated " << sizeof(std::complex<double>) * randomStates.size() * randomStates.front().size()

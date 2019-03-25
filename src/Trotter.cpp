@@ -13,7 +13,7 @@ Propagator(z)
     m_gate.push_back(std::exp(-z) * std::sinh(2.0 * z));
 }
 
-void Trotter::step(qState& state, size_t N)
+void Trotter::step(QState& state, size_t N)
 {
     auto gate = m_gate.begin();
 

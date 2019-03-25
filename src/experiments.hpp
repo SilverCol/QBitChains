@@ -21,7 +21,7 @@ namespace
     std::default_random_engine generator (seed);
     std::normal_distribution<double> distribution (0.0,1.0);
 
-    std::complex<double> inner(const qState& state1, const qState& state2)
+    std::complex<double> inner(const QState& state1, const QState& state2)
     {
         std::complex<double> product;
         for (size_t i = 0; i < state1.size(); ++i)
@@ -31,7 +31,7 @@ namespace
         return product;
     }
 
-    double absSquare(const qState& state)
+    double absSquare(const QState& state)
     {
         double product = 0;
         for (auto& coeff : state)
@@ -52,7 +52,7 @@ void writeBinary(std::vector<double>& data, const std::string& file)
     output.close();
 }
 
-void fillRandomState(qState& target, size_t size)
+void fillRandomState(QState& target, size_t size)
 {
     double norm = 0;
     for (size_t n = 0; n < size; ++n)
@@ -71,12 +71,12 @@ void fillRandomState(qState& target, size_t size)
     }
 }
 
-void addRandomStates(std::list<qState>& target, size_t states, size_t size)
+void addRandomStates(std::list<QState>& target, size_t states, size_t size)
 {
     for (size_t n = 0; n < states; ++n)
     {
         std::cout << "Creating state #" << n << std::endl;
-        qState newState;
+        QState newState;
         fillRandomState(newState, size);
         std::cout << "Norm: " << absSquare(newState) << std::endl;
         target.push_front(newState);
@@ -84,11 +84,11 @@ void addRandomStates(std::list<qState>& target, size_t states, size_t size)
 }
 
 void makeFreeEnergy
-(std::vector<double>& target, std::list<qState>& states, size_t N, size_t M, size_t steps, Propagator* propagator)
+(std::vector<double>& target, std::list<QState>& states, size_t N, size_t M, size_t steps, Propagator* propagator)
 {
     std::vector<std::vector<double> > results;
     size_t n = 0;
-    for (qState& state : states)
+    for (QState& state : states)
     {
         std::cout << "Propagating random state #" << n << std::endl;
         for (size_t i = 0; i < M; ++i)
@@ -120,25 +120,29 @@ void makeFreeEnergy
 }
 
 void makeLocalSpinCorrelation
-(std::vector<double>& target, std::list<qState>& states, size_t j, size_t N, size_t M, size_t steps, Propagator* propagator)
+(std::vector<double>& target, std::list<QState>& states, size_t j, size_t N, size_t M, size_t steps, Propagator* propagator)
 {
     std::vector<std::vector<double> > results;
     size_t n = 0;
-    for (qState& state : states)
+    for (QState& state : states)
     {
         std::cout << "Propagating random state #" << n << std::endl;
 
-        qState xState;
-        // TODO: this function was left unfinished
+        QState xState(state);
+        xState.localSpin(j);
 
         for (size_t i = 0; i < M; ++i)
         {
             if (n == 0) results.emplace_back();
             propagator->propagate(state, N, steps);
-            results[i].push_back(absSquare(state));
+            propagator->propagate(xState, N, steps);
+            xState.localSpin(j);
+            results[i].push_back(std::real(inner(state, xState)));
+            xState.localSpin(j);
         }
         ++n;
     }
+    // TODO: this function was left unfinished
 }
 
 #endif //VAJA_II_2_EXPERIMENTS_HPP

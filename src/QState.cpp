@@ -2,9 +2,9 @@
 // Created by mitja on 25.3.2019.
 //
 
-#include "qState.h"
+#include "QState.h"
 
-void qState::localSpin(size_t j)
+void QState::localSpin(size_t j)
 {
     for (size_t n = 0; n < m_coefficients.size(); ++n)
     {
