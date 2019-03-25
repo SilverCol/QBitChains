@@ -119,5 +119,26 @@ void makeFreeEnergy
     }
 }
 
+void makeLocalSpinCorrelation
+(std::vector<double>& target, std::list<qState>& states, size_t j, size_t N, size_t M, size_t steps, Propagator* propagator)
+{
+    std::vector<std::vector<double> > results;
+    size_t n = 0;
+    for (qState& state : states)
+    {
+        std::cout << "Propagating random state #" << n << std::endl;
+
+        qState xState;
+        // TODO: this function was left unfinished
+
+        for (size_t i = 0; i < M; ++i)
+        {
+            if (n == 0) results.emplace_back();
+            propagator->propagate(state, N, steps);
+            results[i].push_back(absSquare(state));
+        }
+        ++n;
+    }
+}
 
 #endif //VAJA_II_2_EXPERIMENTS_HPP

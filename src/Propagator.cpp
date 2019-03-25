@@ -16,7 +16,7 @@ void Propagator::propagate(qState& state, size_t N, size_t steps)
     }
 }
 
-void Propagator::update(qState& state, qState::iterator gate, size_t start, size_t N)
+void Propagator::update(qState& state, std::vector<std::complex<double> >::iterator gate, size_t start, size_t N)
 {
     for (size_t j = start; j < N; j += 2)
     {

@@ -8,8 +8,8 @@
 #include <complex>
 #include <complex>
 #include <vector>
+#include "qState.h"
 
-typedef std::vector<std::complex<double> > qState;
 
 class Propagator
 {
@@ -19,7 +19,7 @@ public:
     inline double step(){return std::abs(m_z);}
 protected:
     virtual void step(qState& state, size_t N) = 0;
-    void update(qState& state, qState::iterator gate, size_t start, size_t N);
+    void update(qState& state, std::vector<std::complex<double> >::iterator gate, size_t start, size_t N);
     std::complex<double> m_z;
 };
 
