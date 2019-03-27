@@ -8,7 +8,7 @@ names = []
 
 for i in range(11):
     try:
-        data = np.fromfile('localSpin' + str(2*i) + '.bin')
+        data = np.fromfile('spinFlux' + str(2*i) + '.bin')
     except:
         continue
 
@@ -40,10 +40,10 @@ ax.grid()
 
 plots = []
 for n, s in enumerate(S):
-    temp = ax.plot(time[n], s, '-o', lw=1, ms=2)
+    temp = ax.plot(time[n], s, '-o', lw=1, ms=2)[0]
     plots.append(temp)
 
-ax.set_ylabel(r'$\langle J(t) J(0) \rangle$')
+ax.set_ylabel(r'$\langle S_j(t) S_j(0) \rangle$')
 ax.set_xlabel(r'$t$')
 ax.legend(tuple(plots), tuple(names))
 

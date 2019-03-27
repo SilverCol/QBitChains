@@ -166,5 +166,41 @@ void makeLocalSpinCorrelation
     double step = propagator->step() * steps;
     means(results, step, target);
 }
+void makeSpinFluxCorrelation
+(std::vector<double>& target, std::list<QState>& states, size_t N, size_t M, size_t steps, Propagator* propagator)
+{
+    std::vector<std::vector<double> > results;
+    size_t n = 0;
+    for (QState& state : states)
+    {
+        auto start = std::chrono::high_resolution_clock::now();
+        std::cout << "Propagating random state #" << n << std::endl;
+
+        QState xState(state);
+        xState.spinFlux();
+
+        for (size_t i = 0; i < M; ++i)
+        {
+            std::cout << "state #" << n << "step #" << i << std::endl;
+            if (n == 0) results.emplace_back();
+            propagator->propagate(state, N, steps);
+            propagator->propagate(xState, N, steps);
+
+            QState xxState(xState);
+            xxState.spinFlux();
+            results[i].push_back(std::inner_product(state.begin(), state.end(), xxState.begin(), 0.0, std::plus<>(),
+                    [](std::complex<double>& z1, std::complex<double>& z2)
+                        {return std::real(std::conj(z1) * z2);}));
+        }
+        ++n;
+
+        auto finish = std::chrono::high_resolution_clock::now();
+        std::cout   << "Finished in "
+                    << std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count()
+                    << "ms" << std::endl;
+    }
+    double step = propagator->step() * steps;
+    means(results, step, target);
+}
 
 #endif //VAJA_II_2_EXPERIMENTS_HPP

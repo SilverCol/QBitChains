@@ -31,13 +31,13 @@ void QState::spinFlux()
             {
                 size_t m = n ^ (1 << j);
                 m ^= 1 << j1;
-                temp[n] += m_coefficients[m];
+                temp[n] += multiplier * m_coefficients[m];
             }
             else if (((n >> j)&1)&((~n >> j1)&1)) // 10
             {
                 size_t m = n ^ (1 << j);
                 m ^= 1 << j1;
-                temp[n] -= m_coefficients[m];
+                temp[n] -= multiplier * m_coefficients[m];
             }
         }
     }
