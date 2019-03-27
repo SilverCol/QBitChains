@@ -183,7 +183,7 @@
     \end{equation}
 
     Graf~\ref{slika1} prikazuje tako dobljeno prosto energijo za več različnih dolžin verige.
-    Prikazane so tudi napake izračunane po zgornjem izrazu~\ref{eq13} - vidimo da so vse manjše, tem večja je dolžina
+    Prikazane so tudi napake izračunane po zgornjem izrazu~\ref{eq13} - vidimo da so tem manjše, čim večja je dolžina
     verige.
 
     \begin{figure}
@@ -193,18 +193,37 @@
         \label{slika1}
     \end{figure}
 
+    Dalje lahko izračunamo pričakovano vrednost energije v odvisnosti od inverzne temperature:
+
+    \begin{equation}\label{eq14}
+        \langle H \rangle_\beta = -\pder{}{\beta} log(z(\beta))
+    \end{equation}
+
+    Rezultat tega računa je prikazan na sliki~\ref{slika2}.
+    Vidimo, da se pričakovana vrednost energije za različno dolge verige približuje različnim konstantam, ki so kar
+    energije osnovnih stanj.\\
+
+    Če rezultate delimo z dolžino verige, dobimo pričakovano vrednost energije na delec.
+    Za dovolj velike $N$ ta vrednost konvergira k energiji osnovnega stanja (na delec) za neskončno verigo - to nam
+    nakazuje slika~\ref{slika3}.
+
     \begin{figure}
         \centering
         \includegraphics[width = \textwidth]{slika2.pdf}
-        \caption{Pričakovana vrednost energije.}
+        \caption{Pričakovana vrednost energije v odvisnosti od inverzne temperaure.}
         \label{slika2}
     \end{figure}
 
     \begin{figure}
         \centering
         \includegraphics[width = \textwidth]{slika3.pdf}
-        \caption{Termodinamska limita.}
+        \caption{Pričakovana vrednost energije na delec v nizkotemperaturni limiti ($\beta = 4$) v odvisnosti od
+        dolžine verige.}
         \label{slika3}
     \end{figure}
+
+    \section{Korelacijske funkcije}
+
+    \ldots
 
 \end{document}
