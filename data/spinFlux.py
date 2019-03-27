@@ -22,7 +22,7 @@ for i in range(11):
         if stage == 0:
             t.append(entry)
         elif stage == 1:
-            s.append(entry)
+            s.append(entry/(2*i))
         elif stage == 2:
             ds.append(entry)
     time.append(t)
@@ -43,7 +43,7 @@ for n, s in enumerate(S):
     temp = ax.plot(time[n], s, '-o', lw=1, ms=2)[0]
     plots.append(temp)
 
-ax.set_ylabel(r'$\langle J(t) J(0) \rangle$')
+ax.set_ylabel(r'$\frac{1}{N}\langle J(t) J(0) \rangle$')
 ax.set_xlabel(r'$t$')
 ax.legend(tuple(plots), tuple(names))
 

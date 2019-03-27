@@ -4,6 +4,8 @@
 \usepackage[T1]{fontenc}
 %\usepackage[margin=2cm, bottom=3cm, foot=1.5cm]{geometry}
 \usepackage{float}
+\usepackage{amsfonts}
+\usepackage{mathds}
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{subcaption}
@@ -27,6 +29,9 @@
 \newcommand{\x}{\underline{x}}
 \newcommand{\liu}{\hat{\mathcal{L}}}
 \newcommand{\bigO}[1]{\mathcal{O}\left( #1 \right)}
+\newcommand{\pauli}{\mathbf{\sigma}}
+\newcommand{\ket}[1]{|#1\rangle}
+\newcommand{\id}[1]{\mathbb{1}_{2^{#1}}}
 
 \begin{document}
 
@@ -37,26 +42,76 @@
 	\date{\today}
 	\maketitle
 
-    ...
+    Obravnavamo Heisenbergovo spinsko verigo $N$ spinov $S = \half$, kjer je $N$ sodo naravno število. Uporabljamo
+    izotropen antiferomagneten ($J = -1$) model, z interakcijo le med najbližjimi sosedi:
 
-	\section{Trotter-Suzukijeve formule}
-
-    \begin{equation}\label{trotter}
-        e^{z(A + B)} = \left( e^{\frac{z}{N}A}e^{\frac{z}{N}B} \right)^N \left( 1 + \bigO{\frac{z^2}{N}} \right)
+    \begin{equation}\label{eq1}
+        H = \sum_{j=1}^{N} \pauli_j \cdot \pauli_{j+1}
     \end{equation}
 
-    \iffalse
+    Tu je $\pauli_j$ vektor Paulijevih matrik, ki delujejo na $j$-tem mestu. Zaradi preprostosti vpeljemo še
+    periodičen robni pogoj $\pauli_N = \pauli_0$.\\
+
+    Radi bi računali osnovno dinamiko in
+    termodinamiko spinske verige, za kar je potrebno poznati delovanje eksponentne funkcije Hamiltonovega operatorja
+    $e^{zH}$ - uporabili bomo Trotter-Suzukijev razcep. Operator najprej razcepimo na dva dela:
+
+    \begin{equation}\label{eq2}
+            H = A + B, \quad
+            A = \sum_{j=1}^{N/2} \pauli_{2j-1} \cdot \pauli_{2j}, \quad
+            B = \sum_{j=1}^{N/2} \pauli_{2j} \cdot \pauli_{2j+1}
+    \end{equation}
+
+    Posamezni členi v operatorjih $A$ in $B$ komutirajo, zato lahko pišemo:
+
+    \begin{equation}\label{eq3}
+    e^{zA} = \prod_{j=1}^{N/2} exp(z\pauli_{2j-1} \cdot \pauli_{2j}), \quad
+    e^{zB} = \prod_{j=1}^{N/2} exp(z\pauli_{2j} \cdot \pauli_{2j+1})
+    \end{equation}
+
+    Poznati moramo torej le eksponentne funkcije skalarnega produkta Paulijevih matrik za dva sosednja spina:
+
+    \begin{equation}\label{eq4}
+    exp(z\pauli_{j} \cdot \pauli_{j+1}) = \id{j-1} \otimes e^{-z}
+        \begin{pmatrix}
+            e^{2z} & 0 & 0 & 0 \\
+            0 & ch(2z) & sh(2z) & 0 \\
+            0 & sh(2z) & ch(2z) & 0 \\
+            0 & 0 & 0 & e^{2z}
+        \end{pmatrix} \otimes \id{N-j-1}
+    \end{equation}
+
+    Zgornja matrika je zapisana v lastni bazi operatorja $S_z$, $\{ |00\rangle, |01\rangle, |10\rangle, |11\rangle \}$,
+    kjer $0$ označuje stanje s pozitivno, $1$ pa z negativno $z$ projekcijo spina.
+
+	\section{Implementacija algoritma}
+
+    Stanja zapišimo v lastni bazi operatorja $\sigma_j^z$:
+
+    \begin{equation}\label{eq5}
+        \ket{\psi} = \sum_{s_1 \ldots s_N} \psi_{s_1 \ldots s_N} \ket{s_1, \ldots, s_N}
+    \end{equation}
+
+    Delovanje operatorja \ref{eq4} sedaj lahko napišemo po koeficientih:
+
+    \begin{equation}\label{eq6}
+        \begin{split}
+            \ket{\psi^\prime} = exp(z\pauli_{j} \cdot \pauli_{j+1}) \ket{\psi}
+        \end{split}
+    \end{equation}
+
+    Indeksirajmo bazo Hilbertovega prostora z $n = 1, \ldots, 2^N$, kjer binarni zapis indeksa $n$ ustreza zapisu
+    pripadajočega lastnega stanja $|s_1, \ldots, s_N\rangle$:
+
+    \begin{equation}\label{eq7}
+        n = (s_N\ldots s_1)_2, \quad s_i \in \{ 0, 1 \}
+    \end{equation}
+
     \begin{figure}
         \centering
-        \includegraphics[width = \textwidth]{comparison/comparison}
-        \caption{Maksimalno relativno odstopanje od konstantne energije na eni trajektoriji ob uporabi različnih shem: 
-        Trotterjeva formula (T1) \ref{trotter},
-        Suzukijeva 2. reda (S2) \ref{suzuki2},
-        Suzukijeva 4. reda (S4) \ref{suzuki4} in 
-        Runge-Kutta 4. reda (RK4).
-        (Vse trajektorije so računane do časa okoli $t = 10000$ pri parametru $\lambda = 0$.)}
-        \label{comparison}
+        \includegraphics[width = \textwidth]{slika1.pdf}
+        \caption{Graf proste energije.}
+        \label{slika1}
     \end{figure}
-    \fi
 
 \end{document}
