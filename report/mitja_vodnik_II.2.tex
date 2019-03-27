@@ -4,8 +4,6 @@
 \usepackage[T1]{fontenc}
 %\usepackage[margin=2cm, bottom=3cm, foot=1.5cm]{geometry}
 \usepackage{float}
-\usepackage{amsfonts}
-\usepackage{mathds}
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{subcaption}
@@ -31,7 +29,7 @@
 \newcommand{\bigO}[1]{\mathcal{O}\left( #1 \right)}
 \newcommand{\pauli}{\mathbf{\sigma}}
 \newcommand{\ket}[1]{|#1\rangle}
-\newcommand{\id}[1]{\mathbb{1}_{2^{#1}}}
+\newcommand{\id}[1]{\mathbf{1}_{2^{#1}}}
 
 \begin{document}
 
@@ -42,19 +40,19 @@
 	\date{\today}
 	\maketitle
 
-    Obravnavamo Heisenbergovo spinsko verigo $N$ spinov $S = \half$, kjer je $N$ sodo naravno število. Uporabljamo
-    izotropen antiferomagneten ($J = -1$) model, z interakcijo le med najbližjimi sosedi:
+    Obravnavamo Heisenbergovo spinsko verigo $N$ spinov $S = \half$, kjer je $N$ sodo naravno število.
+    Uporabljamo izotropen antiferomagneten ($J = -1$) model, z interakcijo le med najbližjimi sosedi:
 
     \begin{equation}\label{eq1}
         H = \sum_{j=1}^{N} \pauli_j \cdot \pauli_{j+1}
     \end{equation}
 
-    Tu je $\pauli_j$ vektor Paulijevih matrik, ki delujejo na $j$-tem mestu. Zaradi preprostosti vpeljemo še
-    periodičen robni pogoj $\pauli_N = \pauli_0$.\\
+    Tu je $\pauli_j$ vektor Paulijevih matrik, ki delujejo na $j$-tem mestu.
+    Zaradi preprostosti vpeljemo še periodičen robni pogoj $\pauli_N = \pauli_0$.\\
 
-    Radi bi računali osnovno dinamiko in
-    termodinamiko spinske verige, za kar je potrebno poznati delovanje eksponentne funkcije Hamiltonovega operatorja
-    $e^{zH}$ - uporabili bomo Trotter-Suzukijev razcep. Operator najprej razcepimo na dva dela:
+    Radi bi računali osnovno dinamiko in termodinamiko spinske verige, za kar je potrebno poznati delovanje
+    propagatorja, tj. eksponentne funkcije Hamiltonovega operatorja $e^{zH}$ - uporabili bomo Trotter-Suzukijev razcep.
+    Operator najprej razcepimo na dva dela:
 
     \begin{equation}\label{eq2}
             H = A + B, \quad
@@ -72,19 +70,22 @@
     Poznati moramo torej le eksponentne funkcije skalarnega produkta Paulijevih matrik za dva sosednja spina:
 
     \begin{equation}\label{eq4}
-    exp(z\pauli_{j} \cdot \pauli_{j+1}) = \id{j-1} \otimes e^{-z}
+    \begin{split}
+    &exp(z\pauli_{j} \cdot \pauli_{j+1}) = \id{j-1} \otimes U_{j, j+1}^{(2)} \otimes \id{N-j-1}\\
+        &U_{j, j+1}^{(2)} = e^{-z}
         \begin{pmatrix}
             e^{2z} & 0 & 0 & 0 \\
             0 & ch(2z) & sh(2z) & 0 \\
             0 & sh(2z) & ch(2z) & 0 \\
             0 & 0 & 0 & e^{2z}
-        \end{pmatrix} \otimes \id{N-j-1}
+        \end{pmatrix}
+    \end{split}
     \end{equation}
 
     Zgornja matrika je zapisana v lastni bazi operatorja $S_z$, $\{ |00\rangle, |01\rangle, |10\rangle, |11\rangle \}$,
     kjer $0$ označuje stanje s pozitivno, $1$ pa z negativno $z$ projekcijo spina.
 
-	\section{Implementacija algoritma}
+	\section{Implementacija propagatorja}
 
     Stanja zapišimo v lastni bazi operatorja $\sigma_j^z$:
 
@@ -92,26 +93,69 @@
         \ket{\psi} = \sum_{s_1 \ldots s_N} \psi_{s_1 \ldots s_N} \ket{s_1, \ldots, s_N}
     \end{equation}
 
-    Delovanje operatorja \ref{eq4} sedaj lahko napišemo po koeficientih:
+    Delovanje operatorja~\ref{eq4} sedaj obravnavamo po koeficientih:
 
     \begin{equation}\label{eq6}
         \begin{split}
-            \ket{\psi^\prime} = exp(z\pauli_{j} \cdot \pauli_{j+1}) \ket{\psi}
+            \ket{\psi^\prime} &= exp(z\pauli_{j} \cdot \pauli_{j+1}) \ket{\psi}\\
+            \psi_{s_1^\prime \ldots s_N^\prime}^\prime &=
+            \sum_{s_j, s_{s+1}} U_{(s_j^\prime s_{j+1}^\prime) (s_j s_{j+1})}
+            \psi_{s_1^\prime \ldots s_{j-1}^\prime s_j s_{j+1} s_{j+2}^\prime \ldots s_N^\prime}
         \end{split}
     \end{equation}
 
-    Indeksirajmo bazo Hilbertovega prostora z $n = 1, \ldots, 2^N$, kjer binarni zapis indeksa $n$ ustreza zapisu
+    Indeksirajmo bazo Hilbertovega prostora z $n = 0, \ldots, 2^N - 1$, kjer binarni zapis indeksa $n$ ustreza zapisu
     pripadajočega lastnega stanja $|s_1, \ldots, s_N\rangle$:
 
     \begin{equation}\label{eq7}
         n = (s_N\ldots s_1)_2, \quad s_i \in \{ 0, 1 \}
     \end{equation}
 
+    Koeficiente v razvoju~\ref{eq5} imamo naprimer shranjene v tabeli pod indeksi, ki popolnoma opisujejo konfiguracije
+    pripadajočih stanj - $s_j^\prime$ in $s_{j+1}^\prime$ dobimo enostavno kot vrednosti bitov na $j$-tem in $j+1$-vem
+    mestu.
+    Upoštevajmo še, da ima matrika $U_{j, j+1}^{(2)}$ le različne neničelne elemente:
+
+    \begin{equation}\label{eq8}
+    \begin{split}
+        U_{(00)(00)} &= U_{(11)(11)} = e^{z}\\
+        U_{(01)(01)} &= U_{(10)(10)} = e^{-z}ch(2z)\\
+        U_{(10)(01)} &= U_{(01)(10)} = e^{-z}sh(2z)
+    \end{split}
+    \end{equation}
+
+    Iz tega je lahko videti, da v izrazu~\ref{eq6} ločimo le dva primera:
+
+    \begin{equation}\label{eq9}
+    \begin{split}
+        \psi_{s_1^\prime \ldots s_N^\prime}^\prime &= e^{z} \psi_{s_1^\prime \ldots s_N^\prime},
+        \quad ko \quad s_j^\prime = s_{j+1}^\prime\\
+        \psi_{s_1^\prime \ldots s_N^\prime}^\prime &= e^{-z}ch(2z) \psi_{s_1^\prime \ldots s_N^\prime} + e^{-z}sh(2z)
+        \psi_{s_1^\prime \ldots s_{j-1}^\prime s_{j+1}^\prime s_j^\prime s_{j+2}^\prime \ldots s_N^\prime},
+        \quad sicer\\
+    \end{split}
+    \end{equation}
+
+    Indeks zadnjega koeficienta v zgornjem izrazu dobimo, če indeksu $n$ obrnemo bita na mestih $j$ in $j+1$.
+    Opisali smo implementacijo delovanja poljubnega faktorja v izrazu~\ref{eq3}, ki ga že znamo uporabiti za
+    konstrukcijo Trotter-Suzukijevih formul.
+
+    \section{Termalna povprečja}
+
+    \ldots
+
     \begin{figure}
         \centering
         \includegraphics[width = \textwidth]{slika1.pdf}
         \caption{Graf proste energije.}
         \label{slika1}
+    \end{figure}
+
+    \begin{figure}
+        \centering
+        \includegraphics[width = \textwidth]{slika2.pdf}
+        \caption{Pričakovana vrednost energije.}
+        \label{slika2}
     \end{figure}
 
 \end{document}
