@@ -4,6 +4,7 @@ import numpy as np
 beta = []
 F = []
 error = []
+names = []
 
 for i in range(11):
     try:
@@ -11,6 +12,7 @@ for i in range(11):
     except:
         continue
 
+    names.append(r'$N = ' + str(2*i) + r'$')
     b = []
     f = []
     df = []
@@ -34,17 +36,20 @@ error = np.divide(error, beta)
 
 plt.rcParams.update({'font.size': 15})
 fig = plt.figure()
-yMax = np.amax(F)
+yMax = np.amax(F) + 3
 yMin = np.amin(F)
 xMin = np.amin(beta)
 xMax = np.amax(beta)
 ax = fig.subplots(subplot_kw=dict(aspect='auto', autoscale_on=False, xlim=(xMin, xMax), ylim=(yMin, yMax)))
 ax.grid()
 
+plots = []
 for n, f in enumerate(F):
-    ax.errorbar(beta[n], f, error[n], fmt='-o', lw=1, ms=2)
+    temp = ax.errorbar(beta[n], f, error[n], fmt='-o', lw=1, ms=2)[0]
+    plots.append(temp)
 
 ax.set_ylabel(r'$F$')
 ax.set_xlabel(r'$\beta$')
+ax.legend(tuple(plots), tuple(names), ncol=5)
 
 plt.show()

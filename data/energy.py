@@ -3,6 +3,7 @@ import numpy as np
 
 beta = []
 E = []
+names = []
 
 for i in range(11):
     try:
@@ -10,6 +11,7 @@ for i in range(11):
     except:
         continue
 
+    names.append(r'$N = ' + str(2*i) + r'$')
     e = []
     b = []
 
@@ -28,17 +30,20 @@ for n in range(len(E)):
 
 plt.rcParams.update({'font.size': 15})
 fig = plt.figure()
-yMax = np.amax(E)
+yMax = np.amax(E) + 2
 yMin = np.amin(E)
 xMin = np.amin(beta)
 xMax = np.amax(beta)
 ax = fig.subplots(subplot_kw=dict(aspect='auto', autoscale_on=False, xlim=(xMin, xMax), ylim=(yMin, yMax)))
 ax.grid()
 
+plots = []
 for n, e in enumerate(E):
-    ax.plot(beta[n], e, '-o', lw=1, ms=2)
+    temp = ax.plot(beta[n], e, '-o', lw=1, ms=2)[0]
+    plots.append(temp)
 
 ax.set_ylabel(r'$\langle H \rangle$')
 ax.set_xlabel(r'$\beta$')
+ax.legend(tuple(plots), tuple(names), ncol=5)
 
 plt.show()
