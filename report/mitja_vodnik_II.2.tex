@@ -222,9 +222,47 @@
         \label{slika3}
     \end{figure}
 
-    \section{Korelacijske funkcije}
+    \section{Avtokorelacijske funkcije}
 
-    \ldots
+    Sedaj želimo računati avtokorelacijske funkcije pri neskončni temperaturi ($\beta = 0$).
+    To naredimo s podobnim postopkom, kakršnega smo uporabili že v prejšnjem razdelku - namesto po
+    kompletni bazi spet seštevamo po naključni. Avtokorelacijsko funkcijo opazljivke $X$ torej računamo kot:
+
+    \begin{equation}\label{eq15}
+        C_{XX}(t) = \langle X(t)X(0) \rangle =
+        \frac{1}{N_\psi} \sum_{l=1}^{N_\psi} \bra{\psi_l} e^{iHt}Xe^{-iHt}X \ket{\psi_l}
+    \end{equation}
+
+    Algoritem bo podoben, le da tokrat propagiramo po dve stanji:
+
+    \begin{equation}\label{eq16}
+        \begin{split}
+            \ket{\psi_l(t)} &= e^{-iHt}\ket{\psi_l}\\
+            \ket{\psi_l^X(t)} &= e^{-iHt}X\ket{\psi_l},
+        \end{split}
+    \end{equation}
+
+    ki ju uporabimo v računu:
+
+    \begin{equation}\label{eq17}
+        C_{XX}(t) = \frac{1}{N_\psi} \sum_{l=1}^{N_\psi} \bra{\psi_l(t)} X \ket{\psi_l^X(t)}
+    \end{equation}
+
+    \subsection{Lokalna magnetizacija}
+
+    Pri računanju avtokorelacijske funkcije lokalne magnetizacije vzamemo opazljivko $X = \sigma_j^z$, za nek
+    $j = 1, \ldots, N$. Delovanje operatorja $\sigma_j^z$ je preprosto, saj imamo stanja razvita po njegovi lastni bazi:
+
+    \begin{equation}\label{eq18}
+        \sigma_j^z \ket{\psi} = \sum_{s_1\ldots s_N} (-1)^{s_j} \psi_{s_1\ldots s_N}\ket{s_1\ldots s_N}
+    \end{equation}
+
+    V naši implementaciji je to preprosto: za vsak koeficient pogledamo $j$-ti bit pripadajočega indeksa $n$ in
+    koeficient pomnožimo z $-1$, če je bit 1.
+    Dobljeni rezultati so za različne dolžine verig prikazani na slikah~\ref{slika4} in~\ref{slika5}.
+    Na prvi sliki vidimo periodično obnašanje za majhne dolžine, in padanje proti nič za večje, kar ustreza
+    obnašanju v termodinamski limiti ($N \to \infty$).
+    Na drugi sliki je v logaritmični skali to padanje proti nič pri večjih dolžinah verige bolj opazno.
 
     \begin{figure}
         \centering
@@ -236,8 +274,43 @@
     \begin{figure}
         \centering
         \includegraphics[width = \textwidth]{slika5.pdf}
-        \caption{Avtokorelacijska funkcija spinskega toka.}
+        \caption{Avtokorelacijska funkcija lokalne magnetizacije v log skali.}
         \label{slika5}
+    \end{figure}
+
+    \subsection{Spinski tok}
+
+    Spinski tok je definiran kot:
+
+    \begin{equation}\label{eq19}
+        J = \sum_{j=1}^N \left( \sigma_j^x\sigma_{j+1}^y - \sigma_j^y\sigma_{j+1}^x \right)
+    \end{equation}
+
+    Po koeficientih se njegovo delovanje $\ket{\psi^\prime} = J \ket{\psi}$ da poenostaviti na:
+
+    \begin{equation}\label{eq20}
+        \psi^\prime_{s_1^\prime\ldots s_N^\prime} = 2i \sum_{j=1}^N
+        (\delta_{(s_{j+1}s_j)_2, 1} - \delta_{(s_{j+1}s_j)_2, 2})
+        \psi_{s_1^\prime \ldots s_{j-1}^\prime s_{j+1}^\prime s_j^\prime s_{j+2}^\prime \ldots s_N^\prime}
+    \end{equation}
+
+    Izračunane avtokorelacijske funkcije spinskega toka so prikazane na grafu~\ref{slika6}.
+    Vrednosti so deljene z dolžino verige $N$, da je prikazan rezultat relevanten za računanje Kubo-jeve spinske
+    difuzijske konstante:
+
+    \begin{equation}\label{eq21}
+        D = \lim_{t \to \infty} \lim_{N \to \infty}
+        \frac{1}{N} \int_0^t dt^\prime \langle J(t^\prime)J(0) \rangle
+    \end{equation}
+
+    Na sliki~\ref{slika6} je videti, da je dolžina verige še premajhna, da bi zgornji integral obstajal, funkcije namreč
+    izgledajo, kot bi se ustalile pri končni vrednosti.
+
+    \begin{figure}
+        \centering
+        \includegraphics[width = \textwidth]{slika6.pdf}
+        \caption{Avtokorelacijska funkcija spinskega toka.}
+        \label{slika6}
     \end{figure}
 
 
