@@ -11,7 +11,9 @@ DEFINE_int32(scheme, 2, "Number of split-step scheme as S{scheme} (eg. 2 for S2)
 
 DEFINE_string(file, "../data/a.txt", "Path for the output file.");
 
-DEFINE_int32(mode, 0, "Operation mode: 0-phaseSum");
+DEFINE_int32(mode, 0, "Operation mode: 0-phaseSum, 1-localSpinCorrelation");
+
+DEFINE_int32(j, 0, "Spin index, for local spin correlation");
 
 int main(int argc, char* argv[])
 {
@@ -29,6 +31,7 @@ int main(int argc, char* argv[])
 
     std::complex<double> z = 0;
     if (FLAGS_mode == 0) z = std::complex<double>(-FLAGS_z / 2, 0);
+    if (FLAGS_mode == 1) z = std::complex<double>(0, -FLAGS_z);
 
     Propagator* propagator;
     switch(FLAGS_scheme)
@@ -53,14 +56,19 @@ int main(int argc, char* argv[])
         case 0: // Phase sum mode
             std::cout << "Calculating phase sums." << std::endl;
             FLAGS_file.append(std::to_string(FLAGS_N));
-            FLAGS_file.append(".bin");
             makeFreeEnergy(output, randomStates, FLAGS_N, FLAGS_M, FLAGS_steps, propagator);
+            break;
+        case 1: // Local spin correlation
+            std::cout << "Calculating local spin correlations." << std::endl;
+            FLAGS_file.append(std::to_string(FLAGS_N));
+            makeLocalSpinCorrelation(output, randomStates, FLAGS_j, FLAGS_N, FLAGS_M, FLAGS_steps, propagator);
             break;
         default:
             std::cerr << "Invalid mode." << std::endl;
             free(propagator);
             return -1;
     }
+    FLAGS_file.append(".bin");
     std::cout << "Writting to file: " << FLAGS_file << std::endl;
     writeBinary(output, FLAGS_file);
 

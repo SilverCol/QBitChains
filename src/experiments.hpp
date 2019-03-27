@@ -40,6 +40,26 @@ namespace
         }
         return product;
     }
+
+    void means(std::vector<std::vector<double> >& data, double step, std::vector<double>& target)
+    {
+        for (size_t i = 0; i < data.size(); ++i)
+        {
+            double beta = (i+1) * step;
+            target.push_back(beta);
+
+            double mean = std::accumulate(data[i].begin(), data[i].end(), 0.0) / data[i].size();
+            std::cout << "Mean: " << mean << std::endl;
+            target.push_back(mean);
+
+            std::vector<double> deviations(data[i].size());
+            std::transform(data[i].begin(), data[i].end(), deviations.begin(),
+                           [mean](double x){return x - mean;});
+            double stdDev = std::inner_product(deviations.begin(), deviations.end(), deviations.begin(), 0.0);
+            stdDev = std::sqrt(stdDev / (data[i].size() - 1));
+            target.push_back(stdDev);
+        }
+    }
 }
 
 void writeBinary(std::vector<double>& data, const std::string& file)
@@ -108,22 +128,7 @@ void makeFreeEnergy
     }
 
     double step = 2 * propagator->step() * steps;
-    for (size_t i = 0; i < M; ++i)
-    {
-        double beta = (i+1) * step;
-        target.push_back(beta);
-
-        double mean = std::accumulate(results[i].begin(), results[i].end(), 0.0) / results[i].size();
-        std::cout << "Mean: " << mean << std::endl;
-        target.push_back(mean);
-
-        std::vector<double> deviations(results[i].size());
-        std::transform(results[i].begin(), results[i].end(), deviations.begin(),
-                [mean](double x){return x - mean;});
-        double stdDev = std::inner_product(deviations.begin(), deviations.end(), deviations.begin(), 0.0);
-        stdDev = std::sqrt(stdDev / (results[i].size() - 1));
-        target.push_back(stdDev);
-    }
+    means(results, step, target);
 }
 
 void makeLocalSpinCorrelation
@@ -146,12 +151,20 @@ void makeLocalSpinCorrelation
             propagator->propagate(state, N, steps);
             propagator->propagate(xState, N, steps);
             xState.localSpin(j);
-            results[i].push_back(std::real(inner(state, xState)));
+            results[i].push_back(std::inner_product(state.begin(), state.end(), xState.begin(), 0.0, std::plus<>(),
+                    [](std::complex<double>& z1, std::complex<double>& z2)
+                        {return std::real(std::conj(z1) * z2);}));
             xState.localSpin(j);
         }
         ++n;
+
+        auto finish = std::chrono::high_resolution_clock::now();
+        std::cout   << "Finished in "
+                    << std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count()
+                    << "ms" << std::endl;
     }
-    // TODO: this function was left unfinished
+    double step = propagator->step() * steps;
+    means(results, step, target);
 }
 
 #endif //VAJA_II_2_EXPERIMENTS_HPP
