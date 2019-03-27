@@ -28,8 +28,10 @@ public:
     inline std::vector<std::complex<double> >::const_iterator end() const {return m_coefficients.end();}
 
     void localSpin(size_t j);
+    void spinFlux();
 private:
     std::vector<std::complex<double> > m_coefficients;
+    size_t m_N;
 };
 
 
